@@ -82,18 +82,50 @@ class TestPlagiarismChecker(unittest.TestCase):
         similarity = compute_similarity(self.empty_file, self.empty_file)
         self.assertAlmostEqual(similarity, 1.0, places=2)
 
-    def test_one_word_diff(self):
-        """
-        测试一个字不同的情况，期望相似度接近 1.0
-        """
-        with open('one_word_diff.txt', 'w', encoding='utf-8') as f:
-            f.write("今天是星期天，天气晴，今天晚上我要去看电影。")
-        with open('one_word_diff_2.txt', 'w', encoding='utf-8') as f:
-            f.write("今天是星期天，天气晴，今天晚上我要去看电视。")
-        similarity = compute_similarity('one_word_diff.txt', 'one_word_diff_2.txt')
-        self.assertGreater(similarity, 0.9)
-        self.assertLess(similarity, 1.0)
 
+
+    class TestPlagiarismChecker(unittest.TestCase):
+
+        def test_one_word_diff(self):
+            """
+            测试一个字不同的情况，期望相似度接近 1.0
+            """
+            text1 = "今天是星期天，天气晴，今天晚上我要去看电影。"
+            text2 = "今天是星期天，天气晴，今天晚上我要去看电视。"
+
+            # 创建临时文件用于测试
+            with open('temp_text1.txt', 'w', encoding='utf-8') as f:
+                f.write(text1)
+            with open('temp_text2.txt', 'w', encoding='utf-8') as f:
+                f.write(text2)
+
+            similarity = compute_similarity('temp_text1.txt', 'temp_text2.txt')
+
+            # 测试相似度接近 1.0，但不等于 1.0
+            self.assertGreater(similarity, 0.9)
+            self.assertLess(similarity, 1.0)
+
+        def test_partial_content_match(self):
+            """
+            测试部分相似的情况，期望相似度为 0.5 到 0.7 之间
+            """
+            text1 = "今天是星期天，天气晴，今天晚上我要去看电影。"
+            text2 = "今天是晴天，我晚上要去看电影。"
+
+            # 创建临时文件用于测试
+            with open('temp_text1.txt', 'w', encoding='utf-8') as f:
+                f.write(text1)
+            with open('partial_match.txt', 'w', encoding='utf-8') as f:
+                f.write(text2)
+
+            similarity = compute_similarity('temp_text1.txt', 'partial_match.txt')
+
+            # 测试相似度介于 0.5 到 0.7 之间
+            self.assertGreater(similarity, 0.5)
+            self.assertLess(similarity, 0.7)
+
+    if __name__ == '__main__':
+        unittest.main()
 
 
 if __name__ == '__main__':
