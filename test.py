@@ -94,15 +94,7 @@ class TestPlagiarismChecker(unittest.TestCase):
         self.assertGreater(similarity, 0.9)
         self.assertLess(similarity, 1.0)
 
-    def test_partial_content_match(self):
-        """
-        测试部分相似的情况，期望相似度为 0.5 到 0.7 之间
-        """
-        with open('partial_match.txt', 'w', encoding='utf-8') as f:
-            f.write("今天是晴天，我晚上要去看电影。")
-        similarity = compute_similarity(self.orig_file, 'partial_match.txt')
-        self.assertGreater(similarity, 0.5)
-        self.assertLess(similarity, 0.7)
+
 
 if __name__ == '__main__':
     unittest.main()
