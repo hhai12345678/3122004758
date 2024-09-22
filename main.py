@@ -20,3 +20,13 @@ def generate_operand(max_range):
         return f"{fraction.numerator}/{fraction.denominator}"
 
 
+def generate_expression(max_range, max_operators):
+    num_operators = random.randint(1, max_operators)
+    expression = generate_operand(max_range)
+    for _ in range(num_operators):
+        operator = random.choice(OPERATORS)
+        operand = generate_operand(max_range)
+        expression += f" {operator} {operand}"
+    return expression
+
+
