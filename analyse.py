@@ -7,7 +7,7 @@ def profile_code():
     pr = cProfile.Profile()
     pr.enable()
 
-    main()  # 这里运行你的主程序
+    main()
 
     pr.disable()
     s = io.StringIO()
