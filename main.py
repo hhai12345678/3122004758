@@ -76,3 +76,33 @@ def check_answers(exercise_file, answer_file):
     return correct_indices, wrong_indices
 
 
+def write_grades(correct, wrong):
+    with open('Grade.txt', 'w', encoding='utf-8') as file:
+        file.write(f"Correct: {len(correct)} ({', '.join(map(str, correct))})\n")
+        file.write(f"Wrong: {len(wrong)} ({', '.join(map(str, wrong))})\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate and check elementary arithmetic problems.")
+    parser.add_argument('-n', type=int, help="Number of exercises to generate.")
+    parser.add_argument('-r', type=int, help="Range of numbers in exercises.")
+    parser.add_argument('-e', type=str, help="Exercise file to check answers.")
+    parser.add_argument('-a', type=str, help="Answer file to check answers.")
+
+    args = parser.parse_args()
+
+    if args.n and args.r:
+        exercises, answers = generate_exercise(args.n, args.r, 3)
+        write_to_file('Exercises.txt', exercises)
+        write_to_file('Answers.txt', answers)
+        print(f"Generated {args.n} exercises with answers.")
+    elif args.e and args.a:
+        correct, wrong = check_answers(args.e, args.a)
+        write_grades(correct, wrong)
+        print("Checked answers and wrote grades to Grade.txt.")
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
