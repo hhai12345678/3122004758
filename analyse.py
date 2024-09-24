@@ -1,7 +1,7 @@
 import cProfile
 import pstats
 import io
-from main import main  # 假设你的主函数名为main
+from main import main  # 假设主函数名为main
 
 def profile_code():
     pr = cProfile.Profile()
