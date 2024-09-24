@@ -1,3 +1,4 @@
+
 import argparse
 import random
 import fractions
@@ -14,7 +15,7 @@ def generate_fraction(max_denominator):
 
 def generate_operand(max_range):
     if random.choice([True, False]):
-        return str(random.randint(0, max_range - 1))
+        return str(random.randint(1, max_range - 1))  # 避免出现0作为分母
     else:
         fraction = generate_fraction(max_range)
         return f"{fraction.numerator}/{fraction.denominator}"
@@ -32,7 +33,23 @@ def generate_expression(max_range, max_operators):
 
 def calculate_expression(expression):
     try:
-        return eval(expression, {"__builtins__": None}, {})
+        # 将除法替换为分数形式计算
+        tokens = expression.split()
+        result = fractions.Fraction(tokens[0])
+
+        for i in range(1, len(tokens), 2):
+            operator = tokens[i]
+            operand = fractions.Fraction(tokens[i + 1])
+
+            if operator == '+':
+                result += operand
+            elif operator == '-':
+                result -= operand
+            elif operator == '*':
+                result *= operand
+            elif operator == '/':
+                result /= operand  # 保证除法结果为分数
+        return result
     except ZeroDivisionError:
         return None
 
@@ -45,7 +62,8 @@ def generate_exercise(num_exercises, max_range, max_operators):
         result = calculate_expression(expression)
         if result is not None:
             exercises.append(expression)
-            answers.append(str(result))
+            answers.append(
+                f"{result.numerator}/{result.denominator}" if result.denominator != 1 else str(result.numerator))
     return exercises, answers
 
 
@@ -67,8 +85,10 @@ def check_answers(exercise_file, answer_file):
     wrong_indices = []
 
     for index, (exercise, user_answer) in enumerate(zip(exercises, answers), start=1):
-        correct_answer = str(calculate_expression(exercise))
-        if user_answer == correct_answer:
+        correct_answer = calculate_expression(exercise)
+        correct_answer_str = f"{correct_answer.numerator}/{correct_answer.denominator}" if correct_answer.denominator != 1 else str(
+            correct_answer.numerator)
+        if user_answer == correct_answer_str:
             correct_indices.append(index)
         else:
             wrong_indices.append(index)
